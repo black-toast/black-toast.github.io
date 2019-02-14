@@ -95,7 +95,7 @@
 <p>assembleDebug为对应的Gradle Task名，命令可以写成脚本：</p>
 <p>Windows(gradle-debug.bat)<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">@<span class="built_in">echo</span> on</span><br><span class="line">gradlew assembleDebug -Dorg.gradle.daemon=<span class="literal">false</span> -Dorg.gradle.debug=<span class="literal">true</span></span><br></pre></td></tr></table></figure></p>
 <p>使用 <strong>gradle-debug.bat Debug</strong></p>
-<p>Linux（gradle-debug.sh）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"gradlew assemble<span class="variable">$1</span> -Dorg.gradle.daemon=false -Dorg.gradle.debug=true"</span></span><br></pre></td></tr></table></figure></p>
+<p>Linux（gradle-debug.sh）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">gradlew assemble<span class="variable">$1</span> -Dorg.gradle.daemon=<span class="literal">false</span> -Dorg.gradle.debug=<span class="literal">true</span></span><br></pre></td></tr></table></figure></p>
 <p>使用 <strong>sh gradle-debug.sh Debug</strong></p>
 <h2 id="点击Debug按钮"><a href="#点击Debug按钮" class="headerlink" title="点击Debug按钮"></a>点击Debug按钮</h2><p>点击Debug按钮，即可开始调试工程，剩下的流程和正常的Debug一致</p>
 

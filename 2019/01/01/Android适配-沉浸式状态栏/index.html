@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+
+
+
+
+
+
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no" name="viewport">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="">
+    <meta name="author" content="John Doe">
+    <meta name="keywords" content="">
+    <title>Android适配---沉浸式状态栏 ~ BlackToast</title>
+    <link rel="stylesheet" href="/css/Material_Icons.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    
+        <link rel="stylesheet" href="/css/post.css">
+        
+            <link rel="stylesheet" href="/css/Prettify/tomorrow-night-eighties.min.css">
+        
+    
+</head>
+
+<body class=" sidebar-collapse">
+<nav class="navbar navbar-transparent navbar-color-on-scroll fixed-top navbar-expand-lg" color-on-scroll="100" id="sectionsNav">
+    <div class="container">
+        <div class="navbar-translate">
+            <a class="navbar-brand" href="/">
+                BlackToast</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ml-auto">
+                    
+                        
+                            <li class="nav-item">
+                                <a class="nav-link" href="/archives/">
+                                    archives
+                                </a>
+                            </li>
+                        
+                    
+                    
+                        
+                            <li class="nav-item">
+                                <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="https://github.com/black-toast/" target="_blank" data-original-title="See me here">
+                                    <i class="fa fa-github"></i>
+                                </a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+    </div>
+</nav>
+    
+  <div class="page-header header-filter" data-parallax="false" style="background-image: url('/img/boat.jpg'); height: 70vh;">
+    
+      <div class="container">
+        <h1 class="title text-center post_title">Android适配---沉浸式状态栏</h1>
+        <p class="text-center"><b>Tuesday, January 1st 2019, 12:00 am</b></p>
+      </div>
+    
+  </div>
+
+  
+  
+  
+    <div class="row" style="margin: 0 0 0; z-index: 999;">
+  <div class="col-md-8 offset-md-1">
+    <div class="main main-raised">
+      <div class="container">
+        <div class="section">
+          <div class="post_content">
+              <h4 id="沉浸式状态栏"><a href="#沉浸式状态栏" class="headerlink" title="沉浸式状态栏"></a>沉浸式状态栏</h4><blockquote>
+<p>同事为状态栏有蒙层和无法调整黑色字符图标困扰了很久，最近稍微闲下来了，就开始搞一搞。我翻看了今日头条、微博的处理情况，都很ok啊。算是同是做资讯的，没理由咱不行啊，待我试试?</p>
+</blockquote>
+<ul>
+<li>沉浸式状态栏版本兼容情况</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Android版本</th>
+<th>&lt;4.4</th>
+<th>4.4-5.0</th>
+<th>=&gt;5.0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>透明状态栏</td>
+<td>×</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Android版本</th>
+<th>&lt;6.0</th>
+<th>=&gt;6.0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>黑白字符状态栏</td>
+<td>×</td>
+<td>✓</td>
+</tr>
+</tbody>
+</table>
+<h4 id="fitsSystemWindows使用"><a href="#fitsSystemWindows使用" class="headerlink" title="fitsSystemWindows使用"></a>fitsSystemWindows使用</h4><ul>
+<li>官方描述</li>
+</ul>
+<blockquote>
+<p>Boolean internal attribute to adjust view layout based on system windows such as the status bar. If true, adjusts the padding of this view to leave space for the system windows. Will only take effect if this view is in a non-embedded activity. </p>
+</blockquote>
+<ul>
+<li>中文描述</li>
+</ul>
+<blockquote>
+<p>Boolean内部属性是基于系统窗口（如status bar）调整视图布局。如果为true，将调整视图padding为系统窗口预留出空间。Will only take effect if this view is in a non-embedded activity. 这句不是很明白，我想官方想表达的意思是，要想生效，需要设置沉浸式状态栏。</p>
+</blockquote>
+<ul>
+<li><strong>注意：</strong> 该方法在4.4以上才会生效，<strong>android:fitsSystemWindows默认值为false</strong>，并且在哪个控件设置android:fitsSystemWindows=”true”会有不一样的效果：</li>
+</ul>
+<ol>
+<li>不设置android:fitsSystemWindows值，效果如图1</li>
+<li>只要LinearLayout设置了android:fitsSystemWindows=”true”，子控件（如下面布局代码中TextView）不管设不设置为true，只会为LinearLayout添加padding给系统窗口预留空间，效果如图2</li>
+<li>只设置TextView的android:fitsSystemWindows=”true”，只会为TextView添加padding给系统窗口预留空间，有一个灰色蒙层导致色值有点偏差，往下看有解决方法，效果如图3</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</span><br><span class="line">    xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;</span><br><span class="line">    xmlns:tools=&quot;http://schemas.android.com/tools&quot;</span><br><span class="line">    android:layout_width=&quot;match_parent&quot;</span><br><span class="line">    android:layout_height=&quot;match_parent&quot;</span><br><span class="line">    android:orientation=&quot;vertical&quot;</span><br><span class="line">    android:background=&quot;@mipmap/beauty&quot;</span><br><span class="line">    tools:context=&quot;com.blacktoast.demo.statusbar.MainActivity&quot;&gt;</span><br><span class="line"></span><br><span class="line">    &lt;TextView</span><br><span class="line">        android:layout_width=&quot;match_parent&quot;</span><br><span class="line">        android:layout_height=&quot;wrap_content&quot;</span><br><span class="line">        android:text=&quot;Hello World!&quot;</span><br><span class="line">        android:background=&quot;#55ff0000&quot;</span><br><span class="line">        android:fitsSystemWindows=&quot;true&quot; /&gt;</span><br><span class="line"></span><br><span class="line">&lt;/LinearLayout&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="https://upload-images.jianshu.io/upload_images/4221370-1fba61fc05461f59.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/300" alt="不设置android:fitsSystemWindows值"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/4221370-20955b467bde54c0.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/300" alt="LinearLayout设置了android:fitsSystemWindows=&quot;true&quot;"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/4221370-16098107f17eb207.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/300" alt="只设置TextView的android:fitsSystemWindows=&quot;true&quot;"></p>
+<h4 id="透明状态栏（灰色蒙层）"><a href="#透明状态栏（灰色蒙层）" class="headerlink" title="透明状态栏（灰色蒙层）"></a>透明状态栏（灰色蒙层）</h4><ol>
+<li><p>&lt;4.4版本无法调整透明状态栏</p>
+<blockquote>
+<p>无处理方案，GG</p>
+</blockquote>
+</li>
+<li><p>4.4 &lt;= 版本 &lt; 5.0 系统提供方法调整透明状态栏</p>
+<blockquote>
+<p>分为两种方法实现styles.xml和代码调整</p>
+</blockquote>
+</li>
+</ol>
+<blockquote>
+<p><strong>styles.xml</strong></p>
+</blockquote>
+<ul>
+<li>values/styles.xml</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;resources&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!-- Base application theme. --&gt;</span><br><span class="line">    &lt;style name=&quot;AppTheme&quot; parent=&quot;Theme.AppCompat.Light.NoActionBar&quot;&gt;</span><br><span class="line">        &lt;!-- Customize your theme here. --&gt;</span><br><span class="line">        &lt;item name=&quot;colorPrimary&quot;&gt;@color/colorPrimary&lt;/item&gt;</span><br><span class="line">        &lt;item name=&quot;colorPrimaryDark&quot;&gt;@color/colorPrimaryDark&lt;/item&gt;</span><br><span class="line">        &lt;item name=&quot;colorAccent&quot;&gt;@color/colorAccent&lt;/item&gt;</span><br><span class="line">    &lt;/style&gt;</span><br><span class="line"></span><br><span class="line">    &lt;style name=&quot;AppTheme.MainTheme&quot;&gt;&lt;/style&gt;</span><br><span class="line">&lt;/resources&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>values-v19/styles.xml</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;resources&gt;</span><br><span class="line">    &lt;style name=&quot;AppTheme.MainTheme&quot;&gt;</span><br><span class="line">        &lt;item name=&quot;android:windowTranslucentStatus&quot;&gt;true&lt;/item&gt;</span><br><span class="line">    &lt;/style&gt;</span><br><span class="line">&lt;/resources&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>代码调整</strong></p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>版本&gt;= 6.0可能有灰色蒙层(我们需要解决的问题在这)</li>
+</ol>
+<blockquote>
+<p>之前没遇到这个问题，一接手有点懵逼。。先Google看看?。参照这个链接试了一把<a href="https://blog.csdn.net/hmmhhmmhmhhm/article/details/77840604" target="_blank" rel="noopener">解决Android7.0下沉浸式状态栏变灰问题</a>，反正我是没试成功。。博主分析的没毛病，后来一细想，应该是我没添加<strong>FLAG_TRANSLUCENT_STATUS</strong>的原因。我没去深究，因为我发现新的解决思路。</p>
+</blockquote>
+<ul>
+<li>7.0DecorView源码</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">DecorView(Context context, int featureId, PhoneWindow window,WindowManager.LayoutParams params) &#123;</span><br><span class="line">    super(context);</span><br><span class="line">    ......//省略无关代码</span><br><span class="line">    mForceWindowDrawsStatusBarBackground = context.getResources()</span><br><span class="line">        .getBoolean(R.bool.config_forceWindowDrawsStatusBarBackground)</span><br><span class="line">        &amp;&amp; context.getApplicationInfo().targetSdkVersion &gt;= N;</span><br><span class="line">    </span><br><span class="line">    //设置默认的值，灰色</span><br><span class="line">    mSemiTransparentStatusBarColor = context.getResources()</span><br><span class="line">    .getColor(R.color.system_bar_background_semi_transparent, null /* theme */);</span><br><span class="line">    ......//省略无关代码</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">private int calculateStatusBarColor() &#123;</span><br><span class="line">    int flags = mWindow.getAttributes().flags;</span><br><span class="line">    return (flags &amp; FLAG_TRANSLUCENT_STATUS) != 0 ?</span><br><span class="line">        mSemiTransparentStatusBarColor : </span><br><span class="line">        (flags &amp; FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS) != 0 ?</span><br><span class="line">        mWindow.mStatusBarColor : Color.BLACK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>博主是通过反射更改默认色值，博主的分析我就不讲解了，可以自己去详细看。系统获取状态栏色值主要是通过<strong>calculateStatusBarColor()</strong>方法，分为三种情况：</li>
+</ul>
+<ol>
+<li>如果window的flag包含FLAG_TRANSLUCENT_STATUS，则使用<strong>mSemiTransparentStatusBarColor</strong>色值，即使用<strong>R.color.system_bar_background_semi_transparent</strong>色值；</li>
+<li>如果window的flag不包含FLAG_TRANSLUCENT_STATUS，并且window的flag包含<strong>FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS</strong>时，使用<strong>mWindow.mStatusBarColor</strong>色值，即setStatusColor的色值；</li>
+<li>如果window的flag不包含FLAG_TRANSLUCENT_STATUS，并且window的flag不包含<strong>FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS</strong>时，使用黑色<strong>Color.BLACK</strong>。</li>
+</ol>
+<blockquote>
+<p>使用方式1和2都能实现透明状态栏的效果，以下采用方式2实现，<strong>注意：需放在setContentView()方法之前</strong></p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Window window = activity.getWindow();</span><br><span class="line">if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP) &#123;</span><br><span class="line">    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);</span><br><span class="line">    int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN</span><br><span class="line">            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;</span><br><span class="line">    window.getDecorView().setSystemUiVisibility(option);</span><br><span class="line">    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);</span><br><span class="line">    activity.getWindow().setStatusBarColor(色值);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="黑白图标字符状态栏"><a href="#黑白图标字符状态栏" class="headerlink" title="黑白图标字符状态栏"></a>黑白图标字符状态栏</h4><blockquote>
+<p>解决黑白图标字符状态栏需考虑三种情况：魅族手机、小米手机、其他</p>
+</blockquote>
+<ol>
+<li>魅族手机：<a href="http://open-wiki.flyme.cn/index.php?title=Flyme%E7%B3%BB%E7%BB%9FAPI#.E4.B8.80.E3.80.81.E6.B2.89.E6.B5.B8.E5.BC.8F.E7.8A.B6.E6.80.81.E6.A0.8F" target="_blank" rel="noopener">Flyme系统API</a></li>
+<li>小米手机：<a href="https://dev.mi.com/console/doc/detail?pId=1159" target="_blank" rel="noopener">MIUI 9「状态栏黑色字符」实现方法变更通知</a></li>
+<li>其他：</li>
+<li>锤子手机：使用3的处理方式，还需手动调整设置（设置-全局高级设置-状态栏风格-自适应），否则还是存在灰色蒙层</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line">public static void setStatusTextColor(boolean useDart, Activity activity) &#123;</span><br><span class="line">    if (isFlyme()) &#123;</span><br><span class="line">        processFlyme(activity, useDart);</span><br><span class="line">    &#125; else if (isMIUI()) &#123;</span><br><span class="line">        processMIUI(activity, useDart);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        if (useDart) &#123;</span><br><span class="line">            if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.M) &#123;</span><br><span class="line">                activity.getWindow().getDecorView().setSystemUiVisibility(</span><br><span class="line">                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.JELLY_BEAN) &#123;</span><br><span class="line">                activity.getWindow().getDecorView().setSystemUiVisibility(</span><br><span class="line">                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">private static void processFlyme(Activity activity, boolean darkmode) &#123;</span><br><span class="line">    Window window = activity.getWindow();</span><br><span class="line">    if(window != null) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            WindowManager.LayoutParams lp = window.getAttributes();</span><br><span class="line">            Field darkFlag = WindowManager.LayoutParams.class</span><br><span class="line">                    .getDeclaredField(&quot;MEIZU_FLAG_DARK_STATUS_BAR_ICON&quot;);</span><br><span class="line">            Field meizuFlags = WindowManager.LayoutParams.class</span><br><span class="line">                    .getDeclaredField(&quot;meizuFlags&quot;);</span><br><span class="line">            darkFlag.setAccessible(true);</span><br><span class="line">            meizuFlags.setAccessible(true);</span><br><span class="line">            int bit = darkFlag.getInt((Object)null);</span><br><span class="line">            int value = meizuFlags.getInt(lp);</span><br><span class="line">            if(darkmode) &#123;</span><br><span class="line">                value |= bit;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                value &amp;= ~bit;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            meizuFlags.setInt(lp, value);</span><br><span class="line">            window.setAttributes(lp);</span><br><span class="line">        &#125; catch (Exception var8) &#123;</span><br><span class="line">            Log.w(&quot;StatusBarUtils&quot;, &quot;setStatusBarDarkIcon: failed&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">private static void processMIUI(Activity activity, boolean darkmode) &#123;</span><br><span class="line">    if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.M) &#123;   // 即基于 Android 6.0 ，开发版 7.7.13 及以后版本</span><br><span class="line">        compatHighMIUI(activity, darkmode);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        compatLowMIUI(activity, darkmode);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">@TargetApi(Build.VERSION_CODES.M)</span><br><span class="line">private static void compatHighMIUI(Activity activity, boolean darkmode) &#123;</span><br><span class="line">    View decorView = activity.getWindow().getDecorView();</span><br><span class="line">    if (darkmode) &#123;</span><br><span class="line">        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN</span><br><span class="line">                | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        int flag = decorView.getSystemUiVisibility() &amp; ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;</span><br><span class="line">        decorView.setSystemUiVisibility(flag);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">private static void compatLowMIUI(Activity activity, boolean darkmode) &#123;</span><br><span class="line">    Class&lt;? extends Window&gt; clazz = activity.getWindow().getClass();</span><br><span class="line">    try &#123;</span><br><span class="line">        int darkModeFlag = 0;</span><br><span class="line">        Class&lt;?&gt; layoutParams = Class.forName(&quot;android.view.MiuiWindowManager$LayoutParams&quot;);</span><br><span class="line">        Field field = layoutParams.getField(&quot;EXTRA_FLAG_STATUS_BAR_DARK_MODE&quot;);</span><br><span class="line">        darkModeFlag = field.getInt(layoutParams);</span><br><span class="line">        Method extraFlagField = clazz.getMethod(&quot;setExtraFlags&quot;, int.class, int.class);</span><br><span class="line">        extraFlagField.invoke(activity.getWindow(), darkmode ? darkModeFlag : 0, darkModeFlag);</span><br><span class="line">    &#125; catch (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="参考demo"><a href="#参考demo" class="headerlink" title="参考demo"></a>参考demo</h4><ul>
+<li><a href="https://github.com/black-toast/Demo" target="_blank" rel="noopener">demo链接</a></li>
+</ul>
+<h4 id="参考链接："><a href="#参考链接：" class="headerlink" title="参考链接："></a>参考链接：</h4><ul>
+<li><a href="https://blog.csdn.net/hmmhhmmhmhhm/article/details/77840604" target="_blank" rel="noopener">解决Android7.0下沉浸式状态栏变灰问题</a></li>
+</ul>
+
+          </div>
+          <br><br>
+          <div>
+              <p>
+                       
+                      <span class="badge badge-default">#&nbsp;Android,沉浸式状态栏</span>
+                      &nbsp;
+                      
+              </p>
+          </div>
+        </div>
+      </div>  
+    </div>
+  </div>
+  <!-- TOC -->
+  
+  <div id="toc">
+    <p class="toc-title"><i class="material-icons" style="vertical-align:middle">toc</i>Toc:</p> 
+    <div id="tocbot"></div>
+  </div>
+
+</div>
+
+
+<br>
+<!-- Comments -->
+<div class="comments" id="comments">
+
+    
+    <div class="disqus" style="width:100%">
+    <div id="disqus_thread"></div>
+    <script>               
+        var disqus_shortname = '';
+        var disqus_config = function () {
+            this.page.url = 'http://yoursite.com/2019/01/01/Android适配-沉浸式状态栏/'; 
+            this.page.identifier = '/2019/01/01/Android适配-沉浸式状态栏/';
+        };
+        (function() { 
+            var d = document, s = d.createElement('script');
+            s.type = 'text/javascript';
+            s.src = '//'+disqus_shortname+'.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>                                
+</div>
+
+</div>
+  
+
+<footer class="footer footer-default">
+        <div class="container">
+          <div class="float-left" style="padding: 15px 0;">
+              <b>接下来要往哪漂流~</b>
+          </div>
+          <div class="copyright float-right">
+            &copy;
+            <script>
+              document.write(new Date().getFullYear())
+            </script>&nbsp;<a href="https://hexo.io/zh-cn/" target="_blank">HEXO</a>&nbsp;<i class="material-icons">favorite_border</i>
+            <a href="https://github.com/invom/Material-T" target="_blank">Material-T</a>
+          </div>
+        </div>
+</footer>
+      <!--   Core JS Files   -->
+      <script src="/js/core/jquery.min.js?v=3.2.1"></script>
+      <script src="/js/main.js"></script>
+      <script src="/js/core/popper.min.js"></script>
+      <script src="/js/core/bootstrap-material-design.min.js"></script>
+      <script src="/js/plugins/moment.min.js"></script>
+      <!-- Control Center for Material Kit: parallax effects, scripts for the example pages etc -->
+      <script src="/js/material-kit.min.js?v=2.0.5"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script>
+        <script src="/js/post.js"></script>
+        <script src="/js/plugins/prettify.js"></script>
+        <script>
+            $(document).ready(function(){
+                $('pre').addClass('prettyprint linenums');
+                prettyPrint();
+            })
+        </script>
+      
+</body>
+</html>

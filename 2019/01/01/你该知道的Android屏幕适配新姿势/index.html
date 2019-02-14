@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+
+
+
+
+
+
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no" name="viewport">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="">
+    <meta name="author" content="John Doe">
+    <meta name="keywords" content="">
+    <title>你该知道的Android屏幕适配新姿势 ~ BlackToast</title>
+    <link rel="stylesheet" href="/css/Material_Icons.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    
+        <link rel="stylesheet" href="/css/post.css">
+        
+            <link rel="stylesheet" href="/css/Prettify/tomorrow-night-eighties.min.css">
+        
+    
+</head>
+
+<body class=" sidebar-collapse">
+<nav class="navbar navbar-transparent navbar-color-on-scroll fixed-top navbar-expand-lg" color-on-scroll="100" id="sectionsNav">
+    <div class="container">
+        <div class="navbar-translate">
+            <a class="navbar-brand" href="/">
+                BlackToast</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ml-auto">
+                    
+                        
+                            <li class="nav-item">
+                                <a class="nav-link" href="/archives/">
+                                    archives
+                                </a>
+                            </li>
+                        
+                    
+                    
+                        
+                            <li class="nav-item">
+                                <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="https://github.com/black-toast/" target="_blank" data-original-title="See me here">
+                                    <i class="fa fa-github"></i>
+                                </a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+    </div>
+</nav>
+    
+  <div class="page-header header-filter" data-parallax="false" style="background-image: url('/img/boat.jpg'); height: 70vh;">
+    
+      <div class="container">
+        <h1 class="title text-center post_title">你该知道的Android屏幕适配新姿势</h1>
+        <p class="text-center"><b>Tuesday, January 1st 2019, 12:00 am</b></p>
+      </div>
+    
+  </div>
+
+  
+  
+  
+    <div class="row" style="margin: 0 0 0; z-index: 999;">
+  <div class="col-md-8 offset-md-1">
+    <div class="main main-raised">
+      <div class="container">
+        <div class="section">
+          <div class="post_content">
+              <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><blockquote>
+<p>前段时间在掘金上看了一篇关于Android屏幕适配的新方案<a href="https://juejin.im/post/5b6250bee51d451918537021" target="_blank" rel="noopener">Android 屏幕适配从未如斯简单（8月10日最终更新版）</a>以及<a href="https://mp.weixin.qq.com/s/d9QCoBP6kV9VSWvVldVVwA" target="_blank" rel="noopener">一种极低成本的Android屏幕适配方式</a>, 这。。。 不是和我的适配方案一个思路吗，还是有一定的差别。</p>
+<p>真的是巧了，我们公司也是做资讯的，呃。。 和头条好像。起初，我们的需求是改字体，于是写了这篇文章<a href="https://blog.csdn.net/black_bread/article/details/78508938" target="_blank" rel="noopener">Android屏幕适配</a>，该文章写了适配相关知识点以及<strong>如何防止更改系统字体影响应用ui</strong></p>
+<p>接着，产品需求来了，每台机子的资讯频道个数不一样，边距也有差别，1像素都不能差。。。由于项目中并没有做屏幕适配，手动一个个文件改过去？？凉凉😱😱😱</p>
+<p>最后，从适配字体的方案延伸出适配屏幕的方案</p>
+</blockquote>
+<p><img src="https://upload-images.jianshu.io/upload_images/4221370-ef35c61ce6599652.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="真的是我自己的方案，巧的是和头条想一块去了"></p>
+<blockquote>
+<p>之前没条件验证方案，现在头条帮我验证，捡了个现成的😎😎😎</p>
+</blockquote>
+<h3 id="需了解的相关知识"><a href="#需了解的相关知识" class="headerlink" title="需了解的相关知识"></a>需了解的相关知识</h3><ul>
+<li>屏幕尺寸</li>
+</ul>
+<blockquote>
+<p>指屏幕对角线的物理尺寸(inch),1英寸=2.54cm</p>
+</blockquote>
+<ul>
+<li>屏幕分辨率</li>
+</ul>
+<blockquote>
+<p>指屏幕横纵向像素点(px)，例：1920x1080、2560x1440</p>
+</blockquote>
+<ul>
+<li>像素密度</li>
+</ul>
+<blockquote>
+<p>每英寸的像素点(dpi)</p>
+</blockquote>
+<ul>
+<li>屏幕无关像素</li>
+</ul>
+<blockquote>
+<p>指与屏幕像素点无关的表示单位(dp/dip),主要用于限定控件大小</p>
+</blockquote>
+<ul>
+<li><strong>密度关系及其换算表</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>密度类型</th>
+<th>分辨率</th>
+<th>像素密度</th>
+<th>像素密度范围</th>
+<th>换算(dp-&gt;px)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ldpi</td>
+<td>320x240</td>
+<td>120</td>
+<td>0~120</td>
+<td>1dp -&gt; 0.75px</td>
+</tr>
+<tr>
+<td>mdpi</td>
+<td>480x320</td>
+<td>160</td>
+<td>120~160</td>
+<td>1dp -&gt; 1px</td>
+</tr>
+<tr>
+<td>hpdi</td>
+<td>800x480</td>
+<td>240</td>
+<td>160~240</td>
+<td>1dp -&gt; 1.5px</td>
+</tr>
+<tr>
+<td>xhdpi</td>
+<td>1280x720</td>
+<td>320</td>
+<td>240~320</td>
+<td>1dp -&gt; 2px</td>
+</tr>
+<tr>
+<td>xxhdpi</td>
+<td>1920x1080</td>
+<td>480</td>
+<td>320~480</td>
+<td>1dp -&gt; 3px</td>
+</tr>
+<tr>
+<td>xxxhdpi</td>
+<td>2560x1440</td>
+<td>640</td>
+<td>480~640</td>
+<td>1dp -&gt; 4px</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>调整首选项中字体大小，density不会变化，scaledDensity跟随字号变化。因此有特殊需求的情况，不让应用字体跟随设置中字号变化，可直接调整scaledDensity的值。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class MyApplication extends Application &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void onCreate() &#123;</span><br><span class="line">        super.onCreate();</span><br><span class="line">        Resources.getSystem().getDisplayMetrics().scaledDensity = Resources.getSystem().getDisplayMetrics().density;</span><br><span class="line">        getResources().getDisplayMetrics().scaledDensity = getResources().getDisplayMetrics().density;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void onConfigurationChanged(Configuration newConfig) &#123;</span><br><span class="line">        super.onConfigurationChanged(newConfig);</span><br><span class="line">        Resources.getSystem().getDisplayMetrics().scaledDensity = Resources.getSystem().getDisplayMetrics().density;</span><br><span class="line">        getResources().getDisplayMetrics().scaledDensity = getResources().getDisplayMetrics().density;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="为什么需要屏幕适配？？？"><a href="#为什么需要屏幕适配？？？" class="headerlink" title="为什么需要屏幕适配？？？"></a>为什么需要屏幕适配？？？</h3><ul>
+<li>之前，一直不懂为什么需要做适配？？？ 使用dp不是能解决？？？ 1dp = （像素密度/160）px</li>
+</ul>
+<ol>
+<li>先看像素密度公式：dpi = Math.sqrt(宽 <em> 宽 + 高 </em> 高) / 屏幕尺寸，其中宽高指的是屏幕分辨率的宽高</li>
+</ol>
+<blockquote>
+<p>例子1：<br>小米4W<br>分辨率: 1080 <em> 1920<br>屏幕尺寸: 5inch<br>像素密度: dpi = Math.sqrt(1080 </em> 1080 + 1920 * 1920) / 5 ≈ 440<br>1dp = (440 / 160) ≈ 2.75px</p>
+<p>例子2：<br>红米Note4<br>分辨率: 1080 <em> 1920<br>屏幕尺寸: 5.5inch<br>像素密度: dpi = Math.sqrt(1080 </em> 1080 + 1920 * 1920) / 5.5 ≈ 400<br>1dp = (400 / 160) ≈ 2.5px</p>
+<p>结论: 使用dp并不能完全解决屏幕适配问题，使用同样的dp值在每个屏幕上展现出来的相对大小不一致</p>
+</blockquote>
+<h3 id="适配方案一（重新设置density）"><a href="#适配方案一（重新设置density）" class="headerlink" title="适配方案一（重新设置density）"></a>适配方案一（重新设置density）</h3><h5 id="dp与px怎么换算的？sp与px怎么换算的？"><a href="#dp与px怎么换算的？sp与px怎么换算的？" class="headerlink" title="dp与px怎么换算的？sp与px怎么换算的？"></a>dp与px怎么换算的？sp与px怎么换算的？</h5><blockquote>
+<p>分析applyDimension</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 22, getResources().getDisplayMetrics());</span><br><span class="line"></span><br><span class="line">public static float applyDimension(int unit, float value, DisplayMetrics metrics)</span><br><span class="line">&#123;</span><br><span class="line">    switch (unit) &#123;</span><br><span class="line">        case COMPLEX_UNIT_PX:</span><br><span class="line">            return value;</span><br><span class="line">        case COMPLEX_UNIT_DIP:</span><br><span class="line">            return value * metrics.density;</span><br><span class="line">        case COMPLEX_UNIT_SP:</span><br><span class="line">            return value * metrics.scaledDensity;</span><br><span class="line">        case COMPLEX_UNIT_PT:</span><br><span class="line">            return value * metrics.xdpi * (1.0f/72);</span><br><span class="line">        case COMPLEX_UNIT_IN:</span><br><span class="line">            return value * metrics.xdpi;</span><br><span class="line">        case COMPLEX_UNIT_MM:</span><br><span class="line">            return value * metrics.xdpi * (1.0f/25.4f);</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>结论:<br>dp-&gt;px公式：value <em> metrics.density<br>sp-&gt;px公式：value </em> metrics.scaledDensity<br>因此关键在于metrics对象，而metrics对象又是从Resources获取到，Resources对象又是从Activity或者Application中获取</p>
+</blockquote>
+<h5 id="分析DisplayMetrics对象"><a href="#分析DisplayMetrics对象" class="headerlink" title="分析DisplayMetrics对象"></a>分析DisplayMetrics对象</h5><blockquote>
+<p>DisplayMetrics#density 用于dp与px的换算<br>DisplayMetrics#densityDpi 像素密度<br>DisplayMetrics#scaledDensity 字体的缩放因子，正常情况下和density相等，但是调节系统字体大小后会改变这个值</p>
+</blockquote>
+<h5 id="尝试修改Activity-getResources-getDisplayMetrics-属性值，以适配屏幕"><a href="#尝试修改Activity-getResources-getDisplayMetrics-属性值，以适配屏幕" class="headerlink" title="尝试修改Activity.getResources().getDisplayMetrics()属性值，以适配屏幕"></a>尝试修改Activity.getResources().getDisplayMetrics()属性值，以适配屏幕</h5><blockquote>
+<p>放在setContentView之前</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">DisplayMetrics displayMetrics = app.getResources().getDisplayMetrics();</span><br><span class="line">displayMetrics.densityDpi = 160;</span><br><span class="line">displayMetrics.density = 1.0;</span><br><span class="line">displayMetrics.scaledDensity = 1.0;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>结论: 调整参数生效，具体分析可见头条文章我就不在分析了<a href="https://mp.weixin.qq.com/s/d9QCoBP6kV9VSWvVldVVwA" target="_blank" rel="noopener">一种极低成本的Android屏幕适配方式</a></p>
+</blockquote>
+<h5 id="densityDpi、density、scaledDensity要设置多少？"><a href="#densityDpi、density、scaledDensity要设置多少？" class="headerlink" title="densityDpi、density、scaledDensity要设置多少？"></a>densityDpi、density、scaledDensity要设置多少？</h5><blockquote>
+<p>根据密度关系及其换算表，得知某个像素密度范围会对应一个标准值，因此我们直接根据标准值来设置这三个属性值。这样的好处是，将所有屏幕转换成标准屏幕处理<br>例如: 小米4W 像素密度440  此时，调整属性值densityDpi = 480；density = 3.0; scaledDensity = 3.0;</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">实现代码：</span><br><span class="line">    /**</span><br><span class="line">     * 获取像素密度</span><br><span class="line">     * @param densityDpi    像素密度</span><br><span class="line">     */</span><br><span class="line">    private static Density getDensity(int densityDpi) &#123;</span><br><span class="line">        if (densityDpi &lt;= Density.LDPI.densityDpi) &#123;</span><br><span class="line">            return Density.LDPI;</span><br><span class="line">        &#125; else if (densityDpi &lt;= Density.MDPI.densityDpi) &#123;</span><br><span class="line">            return Density.MDPI;</span><br><span class="line">        &#125; else if (densityDpi &lt;= Density.HDPI.densityDpi) &#123;</span><br><span class="line">            return Density.HDPI;</span><br><span class="line">        &#125; else if (densityDpi &lt;= Density.XHDPI.densityDpi) &#123;</span><br><span class="line">            return Density.XHDPI;</span><br><span class="line">        &#125; else if (densityDpi &lt;= Density.XXHDPI.densityDpi) &#123;</span><br><span class="line">            return Density.XXHDPI;</span><br><span class="line">        &#125; else if (densityDpi &lt;= Density.XXXHDPI.densityDpi) &#123;</span><br><span class="line">            return Density.XXXHDPI;</span><br><span class="line">        &#125; else &#123;    // 其他情况使用默认屏幕信息</span><br><span class="line">            int density = (int) (1.0 * densityDpi / 160);</span><br><span class="line">            if (density * 160 &lt; densityDpi) &#123;</span><br><span class="line">                density += 1;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            Density.WHATHDPI.setDensityDpi(density * 160);</span><br><span class="line">            Density.WHATHDPI.setDensity(density);</span><br><span class="line">            Density.WHATHDPI.setScaledDensity(density);</span><br><span class="line">            Density.WHATHDPI.setScaledDensity(density);</span><br><span class="line">            return Density.WHATHDPI;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h5 id="修改系统字体大小返回页面后是否影响配置"><a href="#修改系统字体大小返回页面后是否影响配置" class="headerlink" title="修改系统字体大小返回页面后是否影响配置"></a>修改系统字体大小返回页面后是否影响配置</h5><blockquote>
+<p>修改后会影响页面配置，需实现Activity#onConfigurationChanged或Application#onConfigurationChanged方法，重新设置配置</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public void onConfigurationChanged(android.content.res.Configuration newConfig) &#123;</span><br><span class="line">    super.onConfigurationChanged(newConfig);</span><br><span class="line">    AdaptiveUtil.resetDensity(this);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="更改全局的参数还是更改activity的参数"><a href="#更改全局的参数还是更改activity的参数" class="headerlink" title="更改全局的参数还是更改activity的参数"></a>更改全局的参数还是更改activity的参数</h5><blockquote>
+<p>如果为了兼容以前版本，建议放在BaseActivity中处理配置调整; 否则在Application中处理统一更改配置</p>
+</blockquote>
+<h5 id="和头条相比"><a href="#和头条相比" class="headerlink" title="和头条相比"></a>和头条相比</h5><blockquote>
+<p>① 头条使用displayMetrics.widthPixels / 360来定义标准，本文根据原始的像素密度来匹配标准的屏幕<br>② 头条不仅更改了Activity中的DisplayMetrics对象属性，还改了Appplication中的，本文少了Application中的更改，哎，我想的还是不够细<br>③ 和今日头条一样，不受ui设计稿影响，如果设计稿是按照xxhdpi设计的，此时按照2px = 1dp完成布局，哪天设计稿换成xxxhdpi来设计，此时按照3px = 1dp来完成布局即可。</p>
+</blockquote>
+<h5 id="遇到的问题和不足"><a href="#遇到的问题和不足" class="headerlink" title="遇到的问题和不足"></a>遇到的问题和不足</h5><blockquote>
+<p>冷启动图使用layer时，调整配置后应用冷启动背景图在部分机子上存在闪动的情况，即因为没调配置前与调整配置后dp值变化导致图片变大或缩小</p>
+</blockquote>
+<h3 id="适配方案二（最小宽度限定符）"><a href="#适配方案二（最小宽度限定符）" class="headerlink" title="适配方案二（最小宽度限定符）"></a>适配方案二（最小宽度限定符）</h3><ul>
+<li>最小宽度限定符适配方案，参考<a href="https://mp.weixin.qq.com/s/X-aL2vb4uEhqnLzU5wjc4Q" target="_blank" rel="noopener">Android 目前稳定高效的UI适配方案</a></li>
+<li>个人觉得弊病有三：① 根据该文章讲解，多个dimens文件会导致包增大，可能会增大300kb-800kb左右，可以接受吧；② 需要开发者有一定的经验，知道需要增加哪些常用的尺寸，避免无用功；③ 即使有经验的开发者也可能遗漏某个机型的适配；</li>
+</ul>
+<h3 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h3><p><a href="https://github.com/black-toast/Demo" target="_blank" rel="noopener">demo链接</a></p>
+
+          </div>
+          <br><br>
+          <div>
+              <p>
+                       
+                      <span class="badge badge-default">#&nbsp;Android,屏幕适配</span>
+                      &nbsp;
+                      
+              </p>
+          </div>
+        </div>
+      </div>  
+    </div>
+  </div>
+  <!-- TOC -->
+  
+  <div id="toc">
+    <p class="toc-title"><i class="material-icons" style="vertical-align:middle">toc</i>Toc:</p> 
+    <div id="tocbot"></div>
+  </div>
+
+</div>
+
+
+<br>
+<!-- Comments -->
+<div class="comments" id="comments">
+
+    
+    <div class="disqus" style="width:100%">
+    <div id="disqus_thread"></div>
+    <script>               
+        var disqus_shortname = '';
+        var disqus_config = function () {
+            this.page.url = 'http://yoursite.com/2019/01/01/你该知道的Android屏幕适配新姿势/'; 
+            this.page.identifier = '/2019/01/01/你该知道的Android屏幕适配新姿势/';
+        };
+        (function() { 
+            var d = document, s = d.createElement('script');
+            s.type = 'text/javascript';
+            s.src = '//'+disqus_shortname+'.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>                                
+</div>
+
+</div>
+  
+
+<footer class="footer footer-default">
+        <div class="container">
+          <div class="float-left" style="padding: 15px 0;">
+              <b>接下来要往哪漂流~</b>
+          </div>
+          <div class="copyright float-right">
+            &copy;
+            <script>
+              document.write(new Date().getFullYear())
+            </script>&nbsp;<a href="https://hexo.io/zh-cn/" target="_blank">HEXO</a>&nbsp;<i class="material-icons">favorite_border</i>
+            <a href="https://github.com/invom/Material-T" target="_blank">Material-T</a>
+          </div>
+        </div>
+</footer>
+      <!--   Core JS Files   -->
+      <script src="/js/core/jquery.min.js?v=3.2.1"></script>
+      <script src="/js/main.js"></script>
+      <script src="/js/core/popper.min.js"></script>
+      <script src="/js/core/bootstrap-material-design.min.js"></script>
+      <script src="/js/plugins/moment.min.js"></script>
+      <!-- Control Center for Material Kit: parallax effects, scripts for the example pages etc -->
+      <script src="/js/material-kit.min.js?v=2.0.5"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script>
+        <script src="/js/post.js"></script>
+        <script src="/js/plugins/prettify.js"></script>
+        <script>
+            $(document).ready(function(){
+                $('pre').addClass('prettyprint linenums');
+                prettyPrint();
+            })
+        </script>
+      
+</body>
+</html>

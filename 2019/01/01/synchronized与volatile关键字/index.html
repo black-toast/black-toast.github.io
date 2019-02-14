@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+
+
+
+
+
+
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no" name="viewport">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="">
+    <meta name="author" content="John Doe">
+    <meta name="keywords" content="">
+    <title>synchronized与volatile关键字 ~ BlackToast</title>
+    <link rel="stylesheet" href="/css/Material_Icons.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    
+        <link rel="stylesheet" href="/css/post.css">
+        
+            <link rel="stylesheet" href="/css/Prettify/tomorrow-night-eighties.min.css">
+        
+    
+</head>
+
+<body class=" sidebar-collapse">
+<nav class="navbar navbar-transparent navbar-color-on-scroll fixed-top navbar-expand-lg" color-on-scroll="100" id="sectionsNav">
+    <div class="container">
+        <div class="navbar-translate">
+            <a class="navbar-brand" href="/">
+                BlackToast</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ml-auto">
+                    
+                        
+                            <li class="nav-item">
+                                <a class="nav-link" href="/archives/">
+                                    archives
+                                </a>
+                            </li>
+                        
+                    
+                    
+                        
+                            <li class="nav-item">
+                                <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="https://github.com/black-toast/" target="_blank" data-original-title="See me here">
+                                    <i class="fa fa-github"></i>
+                                </a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+    </div>
+</nav>
+    
+  <div class="page-header header-filter" data-parallax="false" style="background-image: url('/img/boat.jpg'); height: 70vh;">
+    
+      <div class="container">
+        <h1 class="title text-center post_title">synchronized与volatile关键字</h1>
+        <p class="text-center"><b>Tuesday, January 1st 2019, 12:00 am</b></p>
+      </div>
+    
+  </div>
+
+  
+  
+  
+    <div class="row" style="margin: 0 0 0; z-index: 999;">
+  <div class="col-md-8 offset-md-1">
+    <div class="main main-raised">
+      <div class="container">
+        <div class="section">
+          <div class="post_content">
+              <ul>
+<li>volatile则是通知jvm当前变量在寄存器或者cpu中的值是不确定的，需要从主存中读取。不会阻塞线程。 </li>
+<li>synchronized是通过锁机制来控制变量是否可以访问。当变量被锁时，其他线程访问变量将被阻塞，直至锁释放。</li>
+</ul>
+<h1 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h1><ol>
+<li>volatile保证其他线程对这个变量操作时是立即可见的，即操作的是从内存中读取的最新值</li>
+<li>无法保证原子性</li>
+<li>只能修饰变量</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">public class Test &#123;</span><br><span class="line">	private volatile int count;</span><br><span class="line">	public void increase() &#123;</span><br><span class="line">		count++;</span><br><span class="line">		System.out.println(&quot;----&quot; + count);</span><br><span class="line">	&#125;</span><br><span class="line">	public static void main(String[] args) throws Exception &#123;</span><br><span class="line">		Test test = new Test();</span><br><span class="line">		</span><br><span class="line">		for (int i = 0; i &lt; 10; i++) &#123;</span><br><span class="line">			new Thread() &#123;</span><br><span class="line">				public void run() &#123;</span><br><span class="line">					for (int j = 0; j &lt; 10; j++) &#123;</span><br><span class="line">						test.increase();		</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;;</span><br><span class="line">			&#125;.start();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>控制台输出：</li>
+</ul>
+<p><img src="https://upload-images.jianshu.io/upload_images/4221370-5e95762c97467575.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="控制台输出"></p>
+<ul>
+<li>使用场景(DCL双重检测锁)：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">class Singleton&#123;</span><br><span class="line">    private volatile static Singleton instance = null;</span><br><span class="line"> </span><br><span class="line">    private Singleton() &#123;&#125;</span><br><span class="line"> </span><br><span class="line">    public static Singleton getInstance() &#123;</span><br><span class="line">        if(instance==null) &#123;</span><br><span class="line">            synchronized (Singleton.class) &#123;</span><br><span class="line">                if(instance==null)</span><br><span class="line">                    instance = new Singleton();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="synchronized"><a href="#synchronized" class="headerlink" title="synchronized"></a>synchronized</h1><ol>
+<li>保证原子性</li>
+<li>即可修饰变量也可修饰方法</li>
+<li>会阻塞线程</li>
+</ol>
+<h2 id="synchronized非静态方法"><a href="#synchronized非静态方法" class="headerlink" title="synchronized非静态方法"></a>synchronized非静态方法</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">public class Test &#123;</span><br><span class="line">	public synchronized void increase1() &#123;</span><br><span class="line">		for (int i = 0; i &lt; 5; i++) &#123;</span><br><span class="line">			try &#123;</span><br><span class="line">				Thread.sleep(1000);</span><br><span class="line">			&#125; catch (InterruptedException e) &#123;</span><br><span class="line">				// TODO Auto-generated catch block</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">			System.out.println(&quot;increase1----&gt;&quot; + i);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	public synchronized void increase2() &#123;</span><br><span class="line">		for (int i = 0; i &lt; 5; i++) &#123;</span><br><span class="line">			try &#123;</span><br><span class="line">				Thread.sleep(1000);</span><br><span class="line">			&#125; catch (InterruptedException e) &#123;</span><br><span class="line">				// TODO Auto-generated catch block</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">			System.out.println(&quot;increase2----&gt;&quot; + i);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	public static void main(String[] args) throws Exception &#123;</span><br><span class="line">		Test test = new Test();</span><br><span class="line">		</span><br><span class="line"></span><br><span class="line">			new Thread() &#123;</span><br><span class="line">				public void run() &#123;</span><br><span class="line">					test.increase1();</span><br><span class="line">				&#125;;</span><br><span class="line">			&#125;.start();</span><br><span class="line">			new Thread() &#123;</span><br><span class="line">				public void run() &#123;</span><br><span class="line">					test.increase2();</span><br><span class="line">				&#125;;</span><br><span class="line">			&#125;.start();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>控制台输出：</li>
+</ul>
+<p><img src="https://upload-images.jianshu.io/upload_images/4221370-7f6d3e099c24713d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="控制台输出"></p>
+<ul>
+<li>结论：</li>
+</ul>
+<p>如果一个对象有多个synchronized方法，多个线程同时调用该对象的方法，将会同步执行，即同时只能有一个synchronized方法被调用，其他调用将被阻塞直至该方法执行完</p>
+<h2 id="synchronized静态方法"><a href="#synchronized静态方法" class="headerlink" title="synchronized静态方法"></a>synchronized静态方法</h2><blockquote>
+<p>懒。。  直接给结论了</p>
+</blockquote>
+<p>synchronized静态方法和非静态方法的区别在于给方法上锁的对象不一样，非静态方法是给调用的对象上锁，静态方法是给类的Class对象上锁</p>
+<h2 id="synchronized块"><a href="#synchronized块" class="headerlink" title="synchronized块"></a>synchronized块</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">public class Test &#123;</span><br><span class="line">	public void increase1() &#123;</span><br><span class="line">		System.out.println(&quot;increase1----------&gt; start&quot;);</span><br><span class="line">		synchronized (this) &#123;</span><br><span class="line">			for (int i = 0; i &lt; 5; i++) &#123;</span><br><span class="line">				try &#123;</span><br><span class="line">					Thread.sleep(1000);</span><br><span class="line">				&#125; catch (InterruptedException e) &#123;</span><br><span class="line">					// TODO Auto-generated catch block</span><br><span class="line">					e.printStackTrace();</span><br><span class="line">				&#125;</span><br><span class="line">				System.out.println(&quot;increase1----&gt;&quot; + i);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		System.out.println(&quot;increase1----------&gt; end&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	public void increase2() &#123;</span><br><span class="line">		System.out.println(&quot;increase2----------&gt; start&quot;);</span><br><span class="line">		synchronized(this) &#123;</span><br><span class="line">			for (int i = 0; i &lt; 5; i++) &#123;</span><br><span class="line">				try &#123;</span><br><span class="line">					Thread.sleep(1000);</span><br><span class="line">				&#125; catch (InterruptedException e) &#123;</span><br><span class="line">					// TODO Auto-generated catch block</span><br><span class="line">					e.printStackTrace();</span><br><span class="line">				&#125;</span><br><span class="line">				System.out.println(&quot;increase2----&gt;&quot; + i);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		System.out.println(&quot;increase2----------&gt; end&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	public static void main(String[] args) throws Exception &#123;</span><br><span class="line">		Test test = new Test();</span><br><span class="line">		</span><br><span class="line"></span><br><span class="line">			new Thread() &#123;</span><br><span class="line">				public void run() &#123;</span><br><span class="line">					test.increase1();</span><br><span class="line">				&#125;;</span><br><span class="line">			&#125;.start();</span><br><span class="line">			new Thread() &#123;</span><br><span class="line">				public void run() &#123;</span><br><span class="line">					test.increase2();</span><br><span class="line">				&#125;;</span><br><span class="line">			&#125;.start();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>控制台输出：</li>
+</ul>
+<p><img src="https://upload-images.jianshu.io/upload_images/4221370-262df180798714f5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="控制台输出"></p>
+<ul>
+<li>结论</li>
+</ul>
+<p><strong>synchronized方法</strong>是控制同时只能有一个线程执行synchronized方法；<strong>synchronized块</strong>是控制同时只能有一个线程执行synchronized块中的内容</p>
+
+          </div>
+          <br><br>
+          <div>
+              <p>
+                       
+                      <span class="badge badge-default">#&nbsp;Java,synchronized,volatile</span>
+                      &nbsp;
+                      
+              </p>
+          </div>
+        </div>
+      </div>  
+    </div>
+  </div>
+  <!-- TOC -->
+  
+  <div id="toc">
+    <p class="toc-title"><i class="material-icons" style="vertical-align:middle">toc</i>Toc:</p> 
+    <div id="tocbot"></div>
+  </div>
+
+</div>
+
+
+<br>
+<!-- Comments -->
+<div class="comments" id="comments">
+
+    
+    <div class="disqus" style="width:100%">
+    <div id="disqus_thread"></div>
+    <script>               
+        var disqus_shortname = '';
+        var disqus_config = function () {
+            this.page.url = 'http://yoursite.com/2019/01/01/synchronized与volatile关键字/'; 
+            this.page.identifier = '/2019/01/01/synchronized与volatile关键字/';
+        };
+        (function() { 
+            var d = document, s = d.createElement('script');
+            s.type = 'text/javascript';
+            s.src = '//'+disqus_shortname+'.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>                                
+</div>
+
+</div>
+  
+
+<footer class="footer footer-default">
+        <div class="container">
+          <div class="float-left" style="padding: 15px 0;">
+              <b>接下来要往哪漂流~</b>
+          </div>
+          <div class="copyright float-right">
+            &copy;
+            <script>
+              document.write(new Date().getFullYear())
+            </script>&nbsp;<a href="https://hexo.io/zh-cn/" target="_blank">HEXO</a>&nbsp;<i class="material-icons">favorite_border</i>
+            <a href="https://github.com/invom/Material-T" target="_blank">Material-T</a>
+          </div>
+        </div>
+</footer>
+      <!--   Core JS Files   -->
+      <script src="/js/core/jquery.min.js?v=3.2.1"></script>
+      <script src="/js/main.js"></script>
+      <script src="/js/core/popper.min.js"></script>
+      <script src="/js/core/bootstrap-material-design.min.js"></script>
+      <script src="/js/plugins/moment.min.js"></script>
+      <!-- Control Center for Material Kit: parallax effects, scripts for the example pages etc -->
+      <script src="/js/material-kit.min.js?v=2.0.5"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script>
+        <script src="/js/post.js"></script>
+        <script src="/js/plugins/prettify.js"></script>
+        <script>
+            $(document).ready(function(){
+                $('pre').addClass('prettyprint linenums');
+                prettyPrint();
+            })
+        </script>
+      
+</body>
+</html>
